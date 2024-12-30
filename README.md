@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -48,3 +49,7 @@ export default tseslint.config({
   },
 })
 ```
+=======
+# SongEditor
+A web application that allows users to upload, edit and save songs to their own profile. This project is created using typescript, react, python, and fastAPI.
+>>>>>>> 04d03a5348d694cbedf06c3fa19e1c8e04ff55a3
