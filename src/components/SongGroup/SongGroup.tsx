@@ -27,7 +27,7 @@ function SongGroup({ songs, onSelectedSong }: Props) {
   return (
     <>
       <h1>
-        Musicastor <IoMusicalNotesSharp />
+        Musicaster <IoMusicalNotesSharp />
       </h1>
       {songs.length === 0 && <p>No songs in library</p>}
       <List>
