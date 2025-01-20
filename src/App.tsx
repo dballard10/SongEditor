@@ -1,44 +1,79 @@
-// import SongGroup from "./components/SongGroup";
-// import Alert from "./components/Alert";
-// import Button from "./components/Button/Button";
-// import Like from "./components/Like";
-// import NavBar from "./components/NavBar";
-// import Items from "./components/Items";
-//import { useState } from "react";
-import Form from "./components/Form";
 import "./App.css";
+import userService, { User } from "./services/user-service";
+import useUsers from "./hooks/useUsers";
 
 function App() {
-  //   let songs = ["Song 1", "Song 2", "Song 3", "Song 4", "Song 5", "Song 6"];
+  const { users, error, isLoading, setUsers, setError } = useUsers();
 
-  //   // [false, true]
+  const deleteUser = (user: User) => {
+    const originalUsers = [...users];
+    setUsers(users.filter((u) => u.id !== user.id));
 
-  //   const [alertVisible, setAlertVisible] = useState(false);
+    userService.delete(user.id).catch((err) => {
+      setError(err.message);
+      setUsers(originalUsers);
+    });
+  };
 
-  //   const [cartItems, setCartItems] = useState(["Item 1", "Item 2", "Item 3"]);
+  const addUser = () => {
+    const originalUsers = [...users];
+    const newUser = { id: 0, name: "Dylan" };
+    setUsers([newUser, ...users]);
 
-  //   const handleSelectedSong = (song: string) => {
-  //     console.log(song);
-  //   };
+    userService
+      .create(newUser)
+      .then(({ data: savedUser }) => {
+        setUsers([savedUser, ...users]);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setUsers(originalUsers);
+      });
+  };
 
-  //   return (
-  //     <>
-  //       <SongGroup songs={songs} onSelectedSong={handleSelectedSong} />
-  //       {alertVisible && (
-  //         <Alert onClose={() => setAlertVisible(false)}>This is a warning!</Alert>
-  //       )}
-  //       <Button color="primary" onClick={() => setAlertVisible(true)}>
-  //         Don't Click Me
-  //       </Button>
-  //       <Like onClick={() => console.log("Liked")} />
-  //       <NavBar itemsCount={cartItems.length} />
-  //       <Items items={cartItems} onClear={() => setCartItems([])} />
-  //     </>
-  //   );
+  const updateUser = (user: User) => {
+    const originalUsers = [...users];
+    const updatedUser = { ...user, name: user.name + "!" };
+    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+
+    userService.update(user.id, updatedUser).catch((err) => {
+      setError(err.message);
+      setUsers(originalUsers);
+    });
+  };
+
   return (
-    <div>
-      <Form />
-    </div>
+    <>
+      {error && <p className="text-danger">{error}</p>}
+      {isLoading && <div className="spinner-border"></div>}
+      <button className="btn btn-primary mb-3" onClick={addUser}>
+        Add User
+      </button>
+      <ul className="list-group">
+        {users.map((user) => (
+          <li
+            key={user.id}
+            className="list-group-item d-flex justify-content-between"
+          >
+            {user.name}
+            <div>
+              <button
+                className="btn btn-outline-secondary mx-1"
+                onClick={() => updateUser(user)}
+              >
+                Update
+              </button>
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => deleteUser(user)}
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
